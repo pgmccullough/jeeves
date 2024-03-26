@@ -2,6 +2,8 @@ type CSSProperties = {
   [key: string]: string;
 };
 
+export let panelDisplay: boolean = true;
+
 const easyCSS = (element: HTMLElement, styleObject: CSSProperties) => {
   const { style } = element;
   for(const [key, value] of Object.entries(styleObject)) {
@@ -84,6 +86,29 @@ export const domBuilder = () => {
       textAlign: "center"
     });
     header.append(panelClose);
-
     document.body.append(panel);
+
+    let draggingHeader: boolean = false;
+    let panelPos: number = 8;
+
+    const movePanel = (e: MouseEvent, action: string) => {
+      switch(action) {
+        case "down":
+          draggingHeader = true;
+          break;
+        case "up":
+          draggingHeader = false;
+          break;
+        case "move":
+          if(!draggingHeader) return;
+          panelPos += (e.movementX * -1);
+          panel!.style.right = panelPos+"px";
+          break;
+      }
+    }
+
+    header.addEventListener('mousedown', (e) => movePanel(e, 'down'));
+    header.addEventListener('mouseup', (e) => movePanel(e, 'up'));
+    header.addEventListener('mousemove', (e) => movePanel(e, 'move'));
+    panelClose.addEventListener("click", () => { panel?.remove(); panelDisplay = false });
 }

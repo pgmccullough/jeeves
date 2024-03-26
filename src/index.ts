@@ -1,8 +1,6 @@
-import { domBuilder, header, panel, panelClose, panelInner } from "./helpers/domBuilder";
+import { domBuilder, panelDisplay, panelInner } from "./helpers/domBuilder";
 
 const trackedSteps: Array<string> = [];
-
-let panelDisplay = true;
 
 const classIndexIfMultiple = (target: HTMLElement) => {
   const { classList } = target;
@@ -14,22 +12,6 @@ const classIndexIfMultiple = (target: HTMLElement) => {
   }
   return [eleClass, thisClassIndex];
 }
-
-
-// const classIndexIfMultiple = (target: HTMLElement) => {
-//   const { classList } = target;
-//   const eleClass = `.${Array.from(classList).map(indClass => indClass)
-//     .join(".")
-//   }`;
-//   const classMatches = document.querySelectorAll(eleClass);
-//   let thisClassIndex;
-//   if(classMatches.length > 1) {
-//     thisClassIndex = (Array.from(classList).map((indClass, i) => {
-//       if(indClass === target) return i
-//     }).filter(result => result))[0];
-//   }
-//   return [eleClass, thisClassIndex];
-// }
 
 const getIdentity: ((target: HTMLElement | any) => {} | undefined | any) = (target: HTMLElement) => {
   if(target.id) {
@@ -43,18 +25,12 @@ const getIdentity: ((target: HTMLElement | any) => {} | undefined | any) = (targ
 }
 
 const trackClick = ( e: Event ) => {
+  if(!panelDisplay) return;
   if(getIdentity(e.target)?.includes("jeeves__")) return;
   e.stopPropagation();
-  if(!panelDisplay) return;
   const steps = document.createElement("ol");
   steps.classList.add("jeeves__steps");
   domBuilder();
-  if(!document.querySelector('.jeeves__panel')) {
-    header?.addEventListener('mousedown', (e) => movePanel(e, 'down'));
-    header?.addEventListener('mouseup', (e) => movePanel(e, 'up'));
-    header?.addEventListener('mousemove', (e) => movePanel(e, 'move'));
-    panelClose?.addEventListener("click", () => { panel!.remove(); panelDisplay = false });
-  }
   let action;
   let target;
   switch(e.type) {
@@ -99,24 +75,6 @@ const onDOMLoad = () => {
       trackClick
     )
   )
-}
-
-let draggingHeader: boolean = false;
-let panelPos: number = 8;
-
-const movePanel = (e: MouseEvent, action: string) => {
-  switch(action) {
-    case "down":
-      draggingHeader = true;
-      break;
-    case "up":
-      draggingHeader = false;
-      break;
-    case "move":
-      panelPos += (e.movementX * -1);
-      panel!.style.right = panelPos+"px";
-      break;
-  }
 }
 
 if(document.readyState === 'loading') {
