@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Jeeves",
+  "version": "0.1.0",
+  "description": "Store and Repeat Browser Actions",
+  "icons": {
+    "72": "public/assets/bowtie.png"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ],
+  "content_scripts": [
+    {
+      "js": ["dist/index.js"],
+      "matches": [
+        "*://*/*"
+      ],
+      "type": "module"
+    }
+  ]
+}
